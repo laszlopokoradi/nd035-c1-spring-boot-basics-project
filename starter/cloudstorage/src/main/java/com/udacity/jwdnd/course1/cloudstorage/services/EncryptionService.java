@@ -16,7 +16,7 @@ public class EncryptionService {
     private final Logger logger = LoggerFactory.getLogger(EncryptionService.class);
 
     public String encryptValue(String data, String key) {
-        byte[] encryptedValue = null;
+        byte[] encryptedValue = new byte[0];
 
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -33,7 +33,7 @@ public class EncryptionService {
     }
 
     public String decryptValue(String data, String key) {
-        byte[] decryptedValue = null;
+        byte[] decryptedValue = new byte[0];
 
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -44,6 +44,7 @@ public class EncryptionService {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException
                  | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             logger.error(e.getMessage());
+            return null;
         }
 
         return new String(decryptedValue);

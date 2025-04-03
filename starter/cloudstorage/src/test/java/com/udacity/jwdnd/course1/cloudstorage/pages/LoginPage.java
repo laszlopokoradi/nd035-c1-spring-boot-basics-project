@@ -4,41 +4,74 @@ package com.udacity.jwdnd.course1.cloudstorage.pages;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.*;
 
-import java.time.*;
 
+public class LoginPage
+        extends AbstractPage {
 
-public class LoginPage extends AbstractPage {
-
-    protected static final String PAGE_TITLE = "Login";
-    protected static final By LOGIN_USERNAME = By.id("inputUsername");
-    protected static final By LOGIN_PASSWORD = By.id("inputPassword");
-    protected static final By LOGIN_BUTTON = By.id("login-button");
-    protected static final By ERROR_MESSAGE = By.className("alert");
+    public static final String PAGE_TITLE = "Login";
+    public static final By LOGIN_USERNAME = By.id("inputUsername");
+    public static final By LOGIN_PASSWORD = By.id("inputPassword");
+    public static final By LOGIN_BUTTON = By.id("loginButton");
+    public static final By ERROR_MESSAGE = By.className("alert");
+    public static final By SIGNUP_MESSAGE = By.id("successSignupMsg");
+    public static final By SIGNUP_LINK = By.id("linkToSignup");
 
     public LoginPage(WebDriver driver) {
         super(driver);
     }
 
-    public HomePage login(String username, String password) {
-        wait.until(ExpectedConditions.titleContains(PAGE_TITLE));
+    public  boolean isOnLoginPage() {
+        try {
+            return wait.until(ExpectedConditions.titleContains(PAGE_TITLE));
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
 
-        driver.findElement(LOGIN_USERNAME).sendKeys(username);
-        driver.findElement(LOGIN_PASSWORD).sendKeys(password);
-        driver.findElement(LOGIN_BUTTON).click();
+    public void login(String username, String password) {
+        if (!isOnLoginPage()) {
+            throw new IllegalStateException("Not on the login page");
+        }
 
-        return new HomePage(driver);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_USERNAME))
+            .sendKeys(username);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_PASSWORD))
+            .sendKeys(password);
+        wait.until(ExpectedConditions.elementToBeClickable(LOGIN_BUTTON))
+            .click();
     }
 
     public String getErrorMessage() {
-        WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(ERROR_MESSAGE));
-        return errorElement.getText();
+        if (!isErrorMessageDisplayed()) {
+            return null;
+        }
+
+        return driver.findElement(ERROR_MESSAGE)
+                     .getText();
     }
 
     public boolean isErrorMessageDisplayed() {
         try {
-            wait.withTimeout(Duration.ofSeconds(5));
-            return driver.findElement(ERROR_MESSAGE).isDisplayed();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(ERROR_MESSAGE));
+            return true;
         } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public void goToSignupPage() {
+        if (!isOnLoginPage()) {
+            throw new IllegalStateException("Not on the login page");
+        }
+
+        wait.until(ExpectedConditions.elementToBeClickable(SIGNUP_LINK)).click();
+    }
+
+    public boolean isSignupSuccessful() {
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(SIGNUP_MESSAGE));
+            return true;
+        } catch (TimeoutException e) {
             return false;
         }
     }

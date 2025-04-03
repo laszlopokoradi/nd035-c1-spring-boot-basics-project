@@ -7,8 +7,8 @@ import org.openqa.selenium.support.ui.*;
 import java.time.*;
 
 
-public class AbstractPage {
-    protected WebDriver driver;
+public abstract class AbstractPage {
+    protected final WebDriver driver;
     protected final WebDriverWait wait;
 
     public AbstractPage(WebDriver driver) {

@@ -6,9 +6,14 @@ import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.*;
+
 
 @Controller
 public class SecurityController {
+    public static final String LOGIN_PATH = "/login";
+    public static final String SIGNUP_PATH = "/signup";
+    public static final String LOGOUT_PATH = "/logout";
 
     private final UserService userService;
 
@@ -27,31 +32,28 @@ public class SecurityController {
     }
 
     @PostMapping("/signup")
-    public String signupUser(@ModelAttribute User user, Model model) {
+    public String signupUser(@ModelAttribute User user, Model model, RedirectAttributes redirectAttrs) {
         String signupError = null;
 
         if (!userService.isUsernameAvailable(user.getUsername())) {
             signupError = "The username already exists.";
         }
 
-        if (signupError == null) {
-            int rowsAdded = userService.createUser(user);
-            if (rowsAdded < 0) {
-                signupError = "There was an error signing you up. Please try again.";
-            }
+        if (signupError == null && userService.createUser(user) < 0) {
+            signupError = "There was an error signing you up. Please try again.";
         }
 
-        if (signupError == null) {
-            model.addAttribute("signupSuccess", true);
-        } else {
+        if (signupError != null) {
             model.addAttribute("signupError", signupError);
+            return "signup";
         }
 
-        return "signup";
+        redirectAttrs.addFlashAttribute("signupSuccess", true);
+        return "redirect:" + LOGIN_PATH;
     }
 
     @PostMapping("/logout")
     public String logoutUser() {
-        return "redirect:/login";
+        return "redirect:" + LOGIN_PATH;
     }
 }

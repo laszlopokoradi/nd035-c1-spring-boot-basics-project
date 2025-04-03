@@ -19,4 +19,10 @@ public interface FileMapper {
 
     @Delete("DELETE FROM FILES WHERE fileId = #{fileId}")
     Integer deleteFile(Integer fileId);
+
+    @Select("SELECT f.* FROM FILES f INNER JOIN USERS u ON f.userid = u.userId WHERE u.username = #{username}")
+    File[] getFilesByUserName(String username);
+
+    @Select("SELECT * FROM FILES WHERE filename = #{fileName} AND userid = #{userId}")
+    File getFileByUserFileName(Integer userId, String fileName);
 }

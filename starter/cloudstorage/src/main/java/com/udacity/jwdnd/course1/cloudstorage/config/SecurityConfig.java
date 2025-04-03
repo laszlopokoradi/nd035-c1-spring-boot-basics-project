@@ -24,12 +24,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(httpForm ->{
                     httpForm.loginPage("/login").permitAll();
-                    httpForm.defaultSuccessUrl("/home");
+                    httpForm.defaultSuccessUrl("/home", true);
 
                 })
-                .logout(httpLogout -> {
-                    httpLogout.logoutUrl("/logout");
-                })
+                .logout(httpLogout -> httpLogout.logoutUrl("/logout"))
                 .authorizeHttpRequests(registry ->{
                     registry.requestMatchers("/signup","/css/**","/js/**").permitAll();
                     registry.anyRequest().authenticated();

@@ -3,17 +3,19 @@ package com.udacity.jwdnd.course1.cloudstorage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.io.File;
 import java.time.Duration;
+
+import static org.assertj.core.api.Assertions.*;
+
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
@@ -42,7 +44,9 @@ class CloudStorageApplicationTests {
 	@Test
 	public void getLoginPage() {
 		driver.get("http://localhost:" + this.port + "/login");
-		Assertions.assertEquals("Login", driver.getTitle());
+		String title = driver.getTitle();
+
+		assertThat(title).isEqualTo("Login");
 	}
 
 	/**
@@ -83,11 +87,14 @@ class CloudStorageApplicationTests {
 		WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
 		buttonSignUp.click();
 
-		/* Check that the sign up was successful. 
+		/* Check that the sign-up was successful.
 		// You may have to modify the element "success-msg" and the sign-up 
-		// success message below depening on the rest of your code.
+		// success message below depending on the rest of your code.
 		*/
-		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successSignupMsg")));
+
+		String successMessage = driver.findElement(By.id("successSignupMsg")).getText();
+		assertThat(successMessage).contains("You successfully signed up!");
 	}
 
 	/**
@@ -110,12 +117,11 @@ class CloudStorageApplicationTests {
 		loginPassword.click();
 		loginPassword.sendKeys(password);
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-button")));
-		WebElement loginButton = driver.findElement(By.id("login-button"));
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("loginButton")));
+		WebElement loginButton = driver.findElement(By.id("loginButton"));
 		loginButton.click();
 
 		webDriverWait.until(ExpectedConditions.titleContains("Home"));
-
 	}
 
 	/**
@@ -133,9 +139,15 @@ class CloudStorageApplicationTests {
 	public void testRedirection() {
 		// Create a test account
 		doMockSignUp("Redirection","Test","RT","123");
-		
-		// Check if we have been redirected to the log in page.
-		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
+
+		// Signup was successful, we should be redirected to the login page automatically after 10 seconds.
+		// Wait for the page to load. I don't like this waiting for the login page and after that checking the login page.
+		WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		webDriverWait.until(ExpectedConditions.titleContains("Login"));
+
+        // Check if we have been redirected to the login page.
+		String currentUrl = driver.getCurrentUrl();
+		assertThat(currentUrl).isEqualTo("http://localhost:" + this.port + "/login");
 	}
 
 	/**
@@ -158,7 +170,8 @@ class CloudStorageApplicationTests {
 		
 		// Try to access a random made-up URL.
 		driver.get("http://localhost:" + this.port + "/some-random-page");
-		Assertions.assertFalse(driver.getPageSource().contains("Whitelabel Error Page"));
+
+		assertThat(driver.getPageSource()).doesNotContain("Whitelabel Error Page");
 	}
 
 
@@ -191,12 +204,12 @@ class CloudStorageApplicationTests {
 		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
 		uploadButton.click();
 		try {
-			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
+			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("files-success")));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			System.out.println("Large File upload failed");
 		}
-		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 
+		assertThat(driver.getPageSource()).doesNotContain("HTTP Status 403 – Forbidden");
 	}
 
 
