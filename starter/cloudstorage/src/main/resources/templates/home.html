@@ -74,7 +74,7 @@
                             <td>
                                 <div class="d-inline-flex">
                                     <a target="_blank" class="btn btn-success" th:href="@{/files/{id}/view(id=${file.fileId})}">View</a>
-                                    <div th:replace="~{fragments/files.html :: deleteButton(fileId=${file.fileId})}"></div>
+                                    <div th:replace="~{fragments/home.html :: deleteFileButton (fileId=${file.fileId})}"></div>
                                 </div>
                             </td>
                             <th scope="row" th:text="${file.filename}"></th>
@@ -122,7 +122,7 @@
                                             onclick="showNoteModal(this)">
                                         Edit
                                     </button>
-                                    <div th:replace="~{fragments/notes.html :: deleteButton(noteId=${note.noteId})}"></div>
+                                    <div th:replace="~{fragments/home.html :: deleteNoteButton (noteId=${note.noteId})}"></div>
                                 </div>
                             </td>
                             <th scope="row" th:text="${note.noteTitle}">Example Note Title</th>
@@ -205,7 +205,7 @@
                                             onclick="showCredentialModal(this)">
                                         Edit
                                     </button>
-                                    <div th:replace="~{fragments/credentials.html :: deleteButton(credentialId=${credential.credentialId})}"></div>
+                                    <div th:replace="~{fragments/home.html :: deleteCredentialButton (credentialId=${credential.credentialId})}"></div>
                                 </div>
                             </td>
                             <th scope="row" th:text="${credential.url}">Example Credential URL</th>

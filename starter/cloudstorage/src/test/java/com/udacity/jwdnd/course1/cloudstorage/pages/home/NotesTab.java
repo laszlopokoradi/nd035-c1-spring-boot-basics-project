@@ -33,6 +33,7 @@ public class NotesTab
 
     public boolean isOnNotesTab() {
         try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(TAB_ID));
             wait.until(ExpectedConditions.attributeContains(TAB_ID, "class", "active"));
             return true;
         } catch (NullPointerException | WebDriverException e) {

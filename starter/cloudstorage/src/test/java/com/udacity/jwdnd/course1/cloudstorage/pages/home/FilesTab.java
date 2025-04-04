@@ -16,9 +16,12 @@ public class FilesTab
 
     public boolean isOnFilesTab() {
         try {
-            return wait.until(ExpectedConditions.visibilityOfElementLocated(TAB_ID)).getAttribute("class").contains("active");
-        } catch (NullPointerException | NoSuchElementException e) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(TAB_ID));
+            wait.until(ExpectedConditions.attributeContains(TAB_ID, "class", "active"));
+            return true;
+        } catch (NullPointerException | WebDriverException e) {
             return false;
         }
     }
+
 }

@@ -41,19 +41,31 @@ public class HomeController {
             return "redirect:" + LOGOUT_PATH;
         }
 
-        File[] usersFiles = fileService.getFilesByUserId(user.getUserId());
-        model.addAttribute("files", usersFiles);
+        addFilesToModel(model, user);
 
-        Note[] usersNotes = noteService.getNotesByUsername(user.getUsername());
-        model.addAttribute("notes", usersNotes);
-        model.addAttribute("noteModel", new Note());
+        addNotesToModel(model, user);
 
-        Credential[] usersCredentials = credentialService.getDecryptedCredentialsByUser(user);
-        model.addAttribute("credentials", usersCredentials);
-        model.addAttribute("credentialModel", new Credential());
+        addCredentialsToModel(model, user);
 
         model.addAttribute("activeTab", tab);
 
         return "home";
+    }
+
+    private void addCredentialsToModel(Model model, User user) {
+        Credential[] usersCredentials = credentialService.getDecryptedCredentialsByUser(user);
+        model.addAttribute("credentials", usersCredentials);
+        model.addAttribute("credentialModel", new Credential());
+    }
+
+    private void addNotesToModel(Model model, User user) {
+        Note[] usersNotes = noteService.getNotesByUsername(user.getUsername());
+        model.addAttribute("notes", usersNotes);
+        model.addAttribute("noteModel", new Note());
+    }
+
+    private void addFilesToModel(Model model, User user) {
+        File[] usersFiles = fileService.getFilesByUserId(user.getUserId());
+        model.addAttribute("files", usersFiles);
     }
 }

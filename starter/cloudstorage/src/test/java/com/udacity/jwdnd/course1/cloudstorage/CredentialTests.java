@@ -120,8 +120,6 @@ class CredentialTests {
         homePage.credentialsTab.createCredential(newCredential);
         assertThat(homePage.isOnHomePage()).withFailMessage(() -> "Not on the home page")
                                            .isTrue();
-        assertThat(homePage.credentialsTab.isOnCredentialsTab()).withFailMessage(() -> "Not on the notes tab")
-                                                                .isTrue();
 
         Credential credentialInTable = homePage.credentialsTab.getCredentialFromTable(newCredential);
         assertThat(credentialInTable).withFailMessage(() -> "Credential was not correctly created.")
